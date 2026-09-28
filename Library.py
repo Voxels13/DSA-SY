@@ -8,10 +8,12 @@ def return_book(choice,stack,n,book_id):
 
     if not is_full_check(stack,n):
         stack_info = (f"Fiction : {book_id}" if choice == 1 else f"Non-Fiction : {book_id}")
-        stack.append(stack_info) 
-        print(f"Fiction book has been returned" if choice == 1 else "Non-Fiction book has been returned\n")
+        stack.append(stack_info)
+        print("Fiction book has been returned\n" if choice == 1 else "Non-Fiction book has been returned\n")
+        return True
     else:
         print("Return bin is full at the moment :[\n")
+        return False
 
 def process_book(stack,returned_list):
 
@@ -22,7 +24,7 @@ def process_book(stack,returned_list):
             returned_list.remove(book_id)
 
         print(f"{processed_book} has been shelved back\n")
-        print(f"Space remaining in bin: {len(stack)}")
+        print(f"Space used in bin: {len(stack)}\n")
 
     else:
         print("The Return Bin is currently empty\n")
@@ -32,18 +34,22 @@ def top_book(stack):
         print(f"Last returned: {stack[-1]}\n")
     else:
         print("Return Bin is empty\n")
-    
+
 def permit(choice,stack,n,book_id):
     if choice == 1 or choice == 2:
-        return_book(choice,stack,n,book_id)
+        return return_book(choice,stack,n,book_id)
     else:
         print("This category cannot be accepted here\n")
+        return False
 
 def display(stack):
     if not is_empty_check(stack):
-        print(stack)
+        print("Return Bin (top -> bottom):")
+        for book in reversed(stack):
+            print(f"  {book}")
+        print()
     else:
-        print("Stack is Empty")
+        print("Return Bin is empty\n")
 
 #---------------------
 
@@ -69,15 +75,13 @@ def main():
                 print("Please enter a valid integer input\n")
                 continue
 
-            #Check for Unique Book IDs.
             book_id = input("Enter book ID: ")
             if book_id not in returned_books:
-                returned_books.append(book_id)
-                print("Book has been registered successfully\n")
-                permit(choice, stack, n, book_id)
+                if permit(choice, stack, n, book_id):
+                    returned_books.append(book_id)
+                    print("Book has been registered successfully\n")
             else:
                 print("Book already registered\n")
-
 
         elif op == 2:
             process_book(stack,returned_books)
@@ -90,7 +94,6 @@ def main():
 
         elif op == 5:
             print("Exiting Program...")
-
             is_running = False
         else:
             print("Please enter a valid option!")
